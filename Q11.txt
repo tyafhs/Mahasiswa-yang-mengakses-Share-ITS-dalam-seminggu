@@ -1,0 +1,15 @@
+import pyodbc
+import pandas as pd
+import matplotlib.pyplot as plt
+
+conn = pyodbc.connect("Driver={SQL Server};"
+                      "Server=FATHIYA;"
+                      "Database=db_final;"
+                      "Trusted_Connection=yes;")
+
+cursor = conn.cursor()
+sql = cursor.execute("SELECT m.Last_access AS day, COUNT(*) AS jml_akses FROM dbo.MHS m JOIN dbo.Login lg on m.Mahasiswa = lg.users GROUP BY m.Last_access HAVING (COUNT(m.Last_access) > 1) ORDER BY jml_akses DESC")
+result = sql.fetchall()
+df=pd.DataFrame([ij for ij in i] for i in result)
+df.rename(columns={0: 'Hari', 1:'Jumlah'}, inplace = True)
+print (df)
